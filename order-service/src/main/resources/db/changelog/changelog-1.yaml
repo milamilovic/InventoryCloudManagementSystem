@@ -1,0 +1,93 @@
+databaseChangeLog:
+- changeSet:
+     id: 1
+     author: Mila
+     preConditions:
+       - onFail: MARK_RAN
+         not:
+           tableExists:
+             tableName: orders
+     changes:
+       - createTable:
+           tableName: orders
+           columns:
+             - column:
+                 name: id
+                 type: INT
+                 autoIncrement: true
+                 constraints:
+                   primaryKey: true
+                   nullable: false
+             - column:
+                 name: customer_name
+                 type: varchar(250)
+                 constraints:
+                   nullable: false
+             - column:
+                 name: ORDER_DATE
+                 type: date
+- changeSet:
+      id: 2
+      author: Mila
+      preConditions:
+        - onFail: MARK_RAN
+          not:
+            tableExists:
+              tableName: items
+      changes:
+        - createTable:
+            tableName: items
+            columns:
+              - column:
+                  name: id
+                  type: INT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: product_id
+                  type: INT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: quantity
+                  type: INT
+              - column:
+                  name: order_id
+                  type: INT
+                  constraints:
+                    nullable: false
+                    foreignKey: true
+                    foreignKeyName: fk_order
+                    referencedTableName: orders
+                    referemcedColumnNames: id
+- changeSet:
+     id: 3
+     author: Mila
+     changes:
+       - insert:
+           tableName: orders
+           columns:
+             - column:
+                  name: customer_name
+                  value: "peter"
+             - column:
+                  name: order_date
+                  value: '2025-02-10'
+- changeSet:
+     id: 4
+     author: Mila
+     changes:
+       - insert:
+           tableName: items
+           columns:
+              - column:
+                  name: product_id
+                  value: 1
+              - column:
+                  name: order_id
+                  value: 1
+              - column:
+                  name: quantity
+                  value: 1
