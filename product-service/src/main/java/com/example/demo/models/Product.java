@@ -10,7 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "TESTDB.PRODUCTS")
+@Table(name = "PRODUCTS")
 @AllArgsConstructor
 @NoArgsConstructor
 public class Product {
