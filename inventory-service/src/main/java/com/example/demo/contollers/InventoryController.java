@@ -29,7 +29,7 @@ public class InventoryController {
         return ResponseEntity.ok(savedInventory);
     }
 
-    @GetMapping
+    @GetMapping("/find-all")
     public List<Inventory> getAllInventories() {
         return inventoryService.getAllInventories();
     }

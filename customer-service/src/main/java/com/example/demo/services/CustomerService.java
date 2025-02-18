@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.models.Customer;
@@ -12,10 +15,27 @@ import com.example.demo.repositories.CustomerRepository;
 @Service
 public class CustomerService {
 
-	@Autowired CustomerRepository customerRepository;
+	@Autowired private CustomerRepository customerRepository;
+	
+	@Autowired private PasswordEncoder passwordEncoder;
+    
+	@Autowired private AuthenticationManager authenticationManager;
 	
 	public Customer saveCustomer(Customer customer) {
+		customer.setPassword(passwordEncoder.encode(customer.getFirstName()));
         return customerRepository.save(customer);
+    }
+	
+	public Customer login(String email, String password) {
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        email,
+                        password
+                )
+        );
+
+        return customerRepository.findByEmail(email)
+                .orElseThrow();
     }
 
     public List<Customer> getAllCustomers() {
@@ -24,6 +44,10 @@ public class CustomerService {
 
     public Optional<Customer> getCustomerById(Long id) {
         return customerRepository.findById(id);
+    }
+
+    public Optional<Customer> getCustomerByEmail(String email) {
+        return customerRepository.findByEmail(email);
     }
 
     public Customer updateCustomer(Long id, Customer customerDetails) {

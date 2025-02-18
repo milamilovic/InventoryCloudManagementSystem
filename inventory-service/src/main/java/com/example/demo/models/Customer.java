@@ -15,8 +15,6 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
-@Entity
-@Table(name = "CUSTOMERS")
 @AllArgsConstructor
 @NoArgsConstructor
 public class Customer implements UserDetails {

@@ -15,25 +15,45 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.dto.LoginResponse;
 import com.example.demo.models.Customer;
 import com.example.demo.services.CustomerService;
+import com.example.demo.services.JwtService;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/customers")
 public class CustomerController {
 
 	@Autowired private CustomerService customerService;
+	@Autowired private JwtService jwtService;
 
     @PostMapping
-    public ResponseEntity<Customer> createCustomer(@RequestBody Customer customer) {
+    public ResponseEntity<Customer> signup(@RequestBody Customer customer) {
         Customer savedCustomer = customerService.saveCustomer(customer);
         return new ResponseEntity<>(savedCustomer, HttpStatus.CREATED);
     }
 
-    @GetMapping
+    @PostMapping("/{email}/{name}")
+    public ResponseEntity<LoginResponse> login(@PathVariable String email, @PathVariable String name) {
+        Customer customer = customerService.login(email, name);
+        String jwtToken = jwtService.generateToken(customer);
+        LoginResponse response = new LoginResponse(jwtToken, jwtService.getExpirationTime());
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/get-all")
     public ResponseEntity<List<Customer>> getAllCustomers() {
         List<Customer> customers = customerService.getAllCustomers();
         return new ResponseEntity<>(customers, HttpStatus.OK);
+    }
+
+    @GetMapping("/username/{username}")
+    public ResponseEntity<Customer> getCustomerByUsername(@PathVariable String username) {
+        Optional<Customer> customer = customerService.getCustomerByEmail(username);
+        return customer.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
+                       .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @GetMapping("/{id}")
