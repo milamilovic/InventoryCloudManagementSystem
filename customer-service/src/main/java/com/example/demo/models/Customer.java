@@ -1,14 +1,11 @@
 package com.example.demo.models;
 
-import java.time.LocalDate;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
@@ -23,15 +20,12 @@ public class Customer {
     @Column(name = "ID")
 	private Long id;
 
-    @NotBlank(message = "Please provide a name")	
     @Column(name = "FIRST_NAME")
 	private String firstName;
     
-    @NotBlank(message = "Please provide a surname")	
     @Column(name = "LAST_NAME")
 	private String lastName;
     
-    @NotBlank(message = "Please provide an email")	
     @Column(name = "EMAIL")
 	private String email;
 

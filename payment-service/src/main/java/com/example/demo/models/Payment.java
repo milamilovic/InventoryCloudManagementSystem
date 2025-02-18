@@ -1,20 +1,16 @@
 package com.example.demo.models;
 
-import com.example.demo.enums.PaymentStatus;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "TESTDB.PAYMENT")
+@Table(name = "TESTDB.PAYMENTS")
 @AllArgsConstructor
 @NoArgsConstructor
 public class Payment {
@@ -24,14 +20,12 @@ public class Payment {
     @Column(name = "ID")
 	private Long id;
 	
-	@NotNull
 	@Column(name = "ORDER_ID")
 	private Long orderId;
 
-    @Min(0)
     @Column(name = "AMOUNT")
 	private Double amount;
 
     @Column(name = "STATUS")
-	private PaymentStatus status;
+	private Integer status;		//-1 as failed, 0 as created and 1 as paid
 }

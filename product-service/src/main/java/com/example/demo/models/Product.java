@@ -6,8 +6,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
@@ -22,15 +20,12 @@ public class Product {
     @Column(name = "ID")
 	private Long id;
     
-    @NotBlank(message = "Please provide a name")	
     @Column(name = "NAME")
 	private String name;
     
-    @Min(1)
     @Column(name = "PRICE")
 	private Double price;
 
-    @Min(1)
     @Column(name = "QUANTITY")
 	private int quantity;
 

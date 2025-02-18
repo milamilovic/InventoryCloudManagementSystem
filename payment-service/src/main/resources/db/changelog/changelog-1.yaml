@@ -1,0 +1,47 @@
+databaseChangeLog:
+ - changeSet:
+     id: 1
+     author: Mila
+     preConditions:
+       - onFail: MARK_RAN
+         not:
+           tableExists:
+             tableName: payments
+     changes:
+       - createTable:
+           tableName: payments
+           columns:
+             - column:
+                 name: id
+                 type: INT
+                 autoIncrement: true
+                 constraints:
+                   primaryKey: true
+                   nullable: false
+             - column:
+                 name: order_id
+                 type: INT
+                 constraints:
+                   nullable: false
+             - column:
+                 name: amount
+                 type: double
+             - column:
+                 name: status
+                 type: INT
+ - changeSet:
+     id: 2
+     author: Mila
+     changes:
+       - insert:
+           tableName: payments
+           columns:
+             - column:
+                 name: order_id
+                 value: 1
+             - column:
+                 name: amount
+                 value: 999.99
+             - column:
+                 name: status
+                 value: 0

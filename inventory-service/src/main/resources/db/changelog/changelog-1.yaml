@@ -1,0 +1,41 @@
+databaseChangeLog:
+ - changeSet:
+     id: 1
+     author: Mila
+     preConditions:
+       - onFail: MARK_RAN
+         not:
+           tableExists:
+             tableName: inventory
+     changes:
+       - createTable:
+           tableName: inventory
+           columns:
+             - column:
+                 name: id
+                 type: INT
+                 autoIncrement: true
+                 constraints:
+                   primaryKey: true
+                   nullable: false
+             - column:
+                 name: product_id
+                 type: INT
+                 constraints:
+                   nullable: false
+             - column:
+                 name: quantity
+                 type: INT
+ - changeSet:
+     id: 2
+     author: Mila
+     changes:
+       - insert:
+           tableName: inventory
+           columns:
+             - column:
+                 name: product_id
+                 value: 1
+             - column:
+                 name: quantity
+                 value: 1

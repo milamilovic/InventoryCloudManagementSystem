@@ -8,7 +8,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
@@ -23,7 +22,6 @@ public class Order {
     @org.springframework.data.annotation.Id
 	private Long id;
     
-    @NotBlank(message = "Please provide a name")
     @Column(name = "CUSTOMER_NAME")
 	private String customerName;
     
