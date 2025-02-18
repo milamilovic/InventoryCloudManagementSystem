@@ -19,7 +19,7 @@ import com.example.demo.models.Payment;
 import com.example.demo.services.PaymentService;
 
 @RestController
-@RequestMapping("/api/payments")
+@RequestMapping("/payments")
 public class PaymentController {
 
 	@Autowired PaymentService paymentService;

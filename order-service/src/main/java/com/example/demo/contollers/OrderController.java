@@ -19,7 +19,7 @@ import com.example.demo.models.Order;
 import com.example.demo.services.OrderService;
 
 @RestController
-@RequestMapping("/api/orders")
+@RequestMapping("/orders")
 public class OrderController {
 
 	@Autowired private OrderService orderService;

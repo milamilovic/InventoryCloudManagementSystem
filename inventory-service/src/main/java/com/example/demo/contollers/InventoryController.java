@@ -18,7 +18,7 @@ import com.example.demo.models.Inventory;
 import com.example.demo.services.InventoryService;
 
 @RestController
-@RequestMapping("/api/inventories")
+@RequestMapping("/inventories")
 public class InventoryController {
 
 	@Autowired private InventoryService inventoryService;
