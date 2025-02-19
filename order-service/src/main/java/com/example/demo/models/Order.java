@@ -12,7 +12,7 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "TESTDB.ORDERS")
+@Table(name = "ORDERS")
 @AllArgsConstructor
 @NoArgsConstructor
 public class Order {

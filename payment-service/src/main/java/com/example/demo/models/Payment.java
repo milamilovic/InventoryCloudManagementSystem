@@ -10,7 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "TESTDB.PAYMENTS")
+@Table(name = "PAYMENTS")
 @AllArgsConstructor
 @NoArgsConstructor
 public class Payment {
@@ -28,4 +28,36 @@ public class Payment {
 
     @Column(name = "STATUS")
 	private Integer status;		//-1 as failed, 0 as created and 1 as paid
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public Long getOrderId() {
+		return orderId;
+	}
+
+	public void setOrderId(Long orderId) {
+		this.orderId = orderId;
+	}
+
+	public Double getAmount() {
+		return amount;
+	}
+
+	public void setAmount(Double amount) {
+		this.amount = amount;
+	}
+
+	public Integer getStatus() {
+		return status;
+	}
+
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
 }

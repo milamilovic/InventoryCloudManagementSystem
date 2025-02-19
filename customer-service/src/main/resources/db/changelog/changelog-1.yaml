@@ -33,19 +33,13 @@ databaseChangeLog:
                  type: varchar(100)
                  constraints:
                    nullable: false
- - changeSet:
-     id: 2
-     author: Mila
-     changes:
-       - insert:
-           tableName: customers
-           columns:
              - column:
-                 name: first_name
-                 value: "Peter"
+                 name: password
+                 type: varchar(250)
+                 constraints:
+                   nullable: false
              - column:
-                 name: last_name
-                 value: "Smith"
-             - column:
-                 name: email
-                 value: "peter@gmail.com"
+                 name: role
+                 type: varchar(100)
+                 constraints:
+                   nullable: false
