@@ -24,10 +24,27 @@ public class OrderController {
 
 	@Autowired private OrderService orderService;
 	
-	@PostMapping
-    public ResponseEntity<Order> createOrUpdateOrder(@RequestBody Order order) {
+	@PostMapping("/create")
+    public ResponseEntity<Order> createOrder(@RequestBody Order order) {
         Order savedOrder = orderService.saveOrder(order);
         return new ResponseEntity<>(savedOrder, HttpStatus.CREATED);
+    }
+	
+	@PutMapping("/order/{id}")
+    public ResponseEntity<Boolean> order(@PathVariable Long id) {
+        boolean success = true;
+        /*
+         List<OrderItem> orderItems = orderItemService.findByOrderId(id);
+         double totalPrice = 0;
+         for(OrderItem item : orderItems) {
+         	totalPrice += productService.getPriceForProduct(item.getProductId());
+         }
+         paymentService.payOrder(new Payment(id, totalPrice));
+         for(OrderItem item : orderItems) {
+         	inventoryService.changeQuantityForProduct(item.getProductId(), item.getQuantity());
+         }
+         */
+        return new ResponseEntity<>(success, HttpStatus.OK);
     }
 
     @GetMapping("/get-all")

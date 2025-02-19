@@ -14,7 +14,7 @@ import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
 public class WebClientConfig {
 	@Bean
 	public WebClient webClient() {
-	  return WebClient.builder().baseUrl("http://localhost:8080").build();
+	  return WebClient.builder().baseUrl("http://localhost:8085").build();
 	}
 	
 	@Bean

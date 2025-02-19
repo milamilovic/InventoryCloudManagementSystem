@@ -37,6 +37,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests()
                 .requestMatchers("/h2-console/**").permitAll()
                 .requestMatchers("/inventories/find-all").hasRole("ADMIN")
+                .requestMatchers("/inventories/quantity/{id}").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .sessionManagement()
