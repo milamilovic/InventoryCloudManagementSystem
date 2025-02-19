@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -50,5 +51,25 @@ public class InventoryController {
     public ResponseEntity<Void> deleteInventory(@PathVariable Long id) {
         inventoryService.deleteInventory(id);
         return ResponseEntity.noContent().build();
+    }
+    
+    @PutMapping("/quantity/{id}/{change}")
+    public ResponseEntity<Inventory> updateProductQuantity(@PathVariable Long id, @PathVariable int change) {
+    	Inventory updatedInventory = inventoryService.updateProductQuantityByProductId(id, change);
+        
+        if (updatedInventory != null) {
+            return ResponseEntity.ok(updatedInventory);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
+
+    @GetMapping("/quantity/{id}")
+    public ResponseEntity<Integer> getProductQuantity(@PathVariable Long id) {
+        int quantity = inventoryService.getQuantityByProductId(id);
+        
+        if (quantity != -1) {
+            return ResponseEntity.ok(quantity);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 }

@@ -38,4 +38,17 @@ databaseChangeLog:
                  value: 1
              - column:
                  name: quantity
+                 value: 2
+ - changeSet:
+     id: 3
+     author: Mila
+     changes:
+       - insert:
+           tableName: inventory
+           columns:
+             - column:
+                 name: product_id
+                 value: 2
+             - column:
+                 name: quantity
                  value: 1

@@ -32,11 +32,18 @@ public class ProductController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Product> getProductById(@PathVariable Long id) {
-    	System.out.println("pogodjeno");
         Optional<Product> product = productService.getProductById(id);
-        System.out.println(product.isPresent());
         return product.map(ResponseEntity::ok)
                       .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+    }
+
+    @GetMapping("/price/{id}")
+    public ResponseEntity<Double> getProductPriceById(@PathVariable Long id) {
+    	double price = productService.getProductPrice(id);
+    	if (price != -1) {
+            return ResponseEntity.ok(price);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
     @GetMapping("/get-all")
@@ -51,7 +58,7 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    @PutMapping("/{id}/{change}")
+    /*@PutMapping("/{id}/{change}")
     public ResponseEntity<Product> updateProductQuantity(@PathVariable Long id, @PathVariable int change) {
         Product updatedProduct = productService.updateProductQuantity(id, change);
         
@@ -69,5 +76,5 @@ public class ProductController {
             return ResponseEntity.ok(quantity);
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-    }
+    }*/
 }

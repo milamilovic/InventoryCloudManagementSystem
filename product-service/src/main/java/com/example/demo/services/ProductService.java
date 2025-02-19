@@ -29,8 +29,17 @@ public class ProductService {
     public void deleteProduct(Long id) {
         productRepository.deleteById(id);
     }
+    
+    public double getProductPrice(Long id) {
+        Optional<Product> productOptional = productRepository.findById(id);
+        
+        if (productOptional.isPresent()) {
+            return productOptional.get().getPrice();
+        }
+        return -1;
+    }
 
-    public Product updateProductQuantity(Long id, int change) {
+    /*public Product updateProductQuantity(Long id, int change) {
         Optional<Product> productOptional = productRepository.findById(id);
         
         if (productOptional.isPresent()) {
@@ -49,5 +58,5 @@ public class ProductService {
             return productOptional.get().getQuantity();
         }
         return -1;	// if the product can't be found
-    }
+    }*/
 }
