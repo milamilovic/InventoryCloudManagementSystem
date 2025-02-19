@@ -32,7 +32,7 @@ public class OrderItemController {
         return new ResponseEntity<>(createdOrderItem, HttpStatus.CREATED);
     }
 
-    @GetMapping
+    @GetMapping("/get-all")
     public ResponseEntity<List<OrderItem>> getAllOrderItems() {
         List<OrderItem> orderItems = orderItemService.getAllOrderItems();
         return new ResponseEntity<>(orderItems, HttpStatus.OK);

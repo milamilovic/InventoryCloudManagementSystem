@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.persistence.Column;
@@ -37,6 +38,9 @@ public class Customer implements UserDetails {
     
     @Column(name = "PASSWORD")
 	private String password;
+    
+    @Column(name = "ROLE")
+    private String role;
 
 	public Long getId() {
 		return id;
@@ -72,7 +76,7 @@ public class Customer implements UserDetails {
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return List.of();
+		return List.of(new SimpleGrantedAuthority("ROLE_" + this.role));
 	}
 
 	@Override
@@ -107,5 +111,13 @@ public class Customer implements UserDetails {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
 	}
 }

@@ -35,6 +35,7 @@ public class SecurityConfiguration {
         http.csrf()
                 .disable()
                 .authorizeHttpRequests()
+                .requestMatchers("/customers/get-all").hasRole("ADMIN")
                 .requestMatchers("/customers").permitAll()
                 .requestMatchers("/customers/username/{username}").permitAll()
                 .requestMatchers("/customers/{email}/{name}").permitAll()

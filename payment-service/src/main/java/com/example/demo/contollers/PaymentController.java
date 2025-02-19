@@ -30,7 +30,7 @@ public class PaymentController {
         return new ResponseEntity<>(savedPayment, HttpStatus.CREATED);
     }
 
-    @GetMapping
+    @GetMapping("/get-all")
     public ResponseEntity<List<Payment>> getAllPayments() {
         List<Payment> payments = paymentService.getAllPayments();
         return new ResponseEntity<>(payments, HttpStatus.OK);

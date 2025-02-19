@@ -36,6 +36,8 @@ public class SecurityConfiguration {
                 .disable()
                 .authorizeHttpRequests()
                 .requestMatchers("/h2-console/**").permitAll()
+                .requestMatchers("/orders/get-all").hasRole("ADMIN")
+                .requestMatchers("/items/get-all").hasRole("ADMIN")
                 .anyRequest().authenticated()
                 .and()
                 .sessionManagement()

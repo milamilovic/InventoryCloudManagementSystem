@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
+import com.example.demo.models.Customer;
 import com.example.demo.services.JwtService;
 
 import jakarta.servlet.FilterChain;
@@ -54,6 +55,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
 
                 if (jwtService.isTokenValid(jwt, userDetails)) {
+                	String role = jwtService.extractClaim(jwt, claims -> claims.get("role", String.class));
+                    if (userDetails instanceof Customer) {
+                        ((Customer) userDetails).setRole(role);
+                    }
+
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                             userDetails,
                             null,
