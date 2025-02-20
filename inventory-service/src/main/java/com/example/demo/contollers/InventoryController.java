@@ -65,7 +65,6 @@ public class InventoryController {
 
     @GetMapping("/quantity/{id}")
     public ResponseEntity<Integer> getProductQuantity(@PathVariable Long id) {
-		System.out.println("pogodio get quantity inventory");
         int quantity = inventoryService.getQuantityByProductId(id);
         
         if (quantity != -1) {

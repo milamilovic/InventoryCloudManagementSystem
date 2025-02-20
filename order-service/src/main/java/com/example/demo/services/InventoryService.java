@@ -11,15 +11,15 @@ public class InventoryService {
 	@Autowired
     private WebClient webClient;
 	
-	public double changeQuantityForProduct(Long productId, int quantity) {
-		double price = webClient.put()
+	public Object changeQuantityForProduct(Long productId, int quantity) {
+		Object price = webClient.put()
 	            .uri("/inventories/quantity/" + productId + "/" + quantity)
 	            .retrieve()
 	            .onStatus(HttpStatusCode::isError, response -> {
 	                System.out.println("Error response: " + response.statusCode() + " - " + response.toString());
 	            	return null;
 	            })
-	            .bodyToMono(Double.class)
+	            .bodyToMono(Object.class)
 	            .block();
         return price;
     }

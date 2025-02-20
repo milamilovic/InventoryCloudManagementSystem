@@ -1,5 +1,6 @@
 package com.example.demo.contollers;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,17 +46,28 @@ public class OrderController {
     }
 	
 	@PutMapping("/order/{id}")
-    public ResponseEntity<Boolean> order(@PathVariable Long id) {
+    public ResponseEntity<Boolean> placeOrder(@PathVariable Long id) {
         boolean success = true;
 		List<OrderItem> orderItems = orderItemService.findByOrderId(id);
 		double totalPrice = 0;
 		for(OrderItem item : orderItems) {
 			totalPrice += productService.getProductPrice(item.getProductId());
 		}
-		paymentService.payOrder(new Payment(id, totalPrice));
+		HashMap<Long, Integer> changedInventory = new HashMap<>();
 		for(OrderItem item : orderItems) {
-			inventoryService.changeQuantityForProduct(item.getProductId(), item.getQuantity());
+			Object inventory = inventoryService.changeQuantityForProduct(item.getProductId(), -1 * item.getQuantity());
+			if(inventory == null) {
+				success = false;
+				//rollback
+				for(Long k : changedInventory.keySet()) {
+					inventoryService.changeQuantityForProduct(k, changedInventory.get(k));
+				}
+		        return new ResponseEntity<>(success, HttpStatus.EXPECTATION_FAILED);
+			} else {
+				changedInventory.put(item.getProductId(), item.getQuantity());
+			}
 		}
+		paymentService.payOrder(new Payment(id, totalPrice));
         return new ResponseEntity<>(success, HttpStatus.OK);
     }
 
