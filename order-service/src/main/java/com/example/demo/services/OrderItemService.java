@@ -11,6 +11,10 @@ import org.springframework.web.reactive.function.client.WebClient;
 import com.example.demo.models.OrderItem;
 import com.example.demo.repositories.OrderItemRepository;
 
+import io.github.resilience4j.circuitbreaker.CircuitBreaker;
+import io.github.resilience4j.reactor.circuitbreaker.operator.CircuitBreakerOperator;
+import reactor.core.publisher.Mono;
+
 @Service
 public class OrderItemService {
 
@@ -19,8 +23,12 @@ public class OrderItemService {
 	@Autowired
     private WebClient webClient;
 	
+	@Autowired 
+	private CircuitBreaker circuitBreaker;
+	
 	public OrderItem saveOrderItem(OrderItem orderItem) {
-		int quantity = webClient.get()
+		int quantity = Mono.defer(() -> 
+			webClient.get()
 	            .uri("/inventories/quantity/" + orderItem.getProductId())
 	            .retrieve()
 	            .onStatus(HttpStatusCode::isError, response -> {
@@ -28,8 +36,15 @@ public class OrderItemService {
 	            	return null;
 	            })
 	            .bodyToMono(Integer.class)
-	            .block();
-    	if (orderItem.getQuantity() > quantity) {
+				)
+	            .transform(CircuitBreakerOperator.of(circuitBreaker))
+	            .onErrorResume(throwable -> {
+	                System.err.println("error circuit breaker: " + throwable.toString());
+	                return Mono.empty();
+	            })
+	        .block();
+		System.out.println("Quantity: " + quantity);
+		if(quantity <= 0 || orderItem.getQuantity() > quantity) {
             throw new IllegalArgumentException("Not enough quantity for product ID: " + orderItem.getProductId());
         }
         return orderItemRepository.save(orderItem);

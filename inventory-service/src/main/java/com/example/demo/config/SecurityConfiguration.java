@@ -39,6 +39,7 @@ public class SecurityConfiguration {
                 .requestMatchers("/inventories/find-all").hasRole("ADMIN")
                 .requestMatchers("/inventories/quantity/{id}").permitAll()
                 .requestMatchers("/inventories/quantity/{id}/{change}").permitAll()
+                .requestMatchers("/inventories/quantity/{id}").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .sessionManagement()
