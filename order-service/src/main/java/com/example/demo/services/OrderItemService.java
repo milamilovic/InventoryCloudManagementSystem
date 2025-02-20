@@ -4,16 +4,13 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import com.example.demo.models.OrderItem;
 import com.example.demo.repositories.OrderItemRepository;
 
-import io.github.resilience4j.circuitbreaker.CircuitBreaker;
-import io.github.resilience4j.reactor.circuitbreaker.operator.CircuitBreakerOperator;
-import reactor.core.publisher.Mono;
+import io.github.resilience4j.bulkhead.annotation.Bulkhead;
+import io.github.resilience4j.retry.annotation.Retry;
 
 @Service
 public class OrderItemService {
@@ -23,12 +20,23 @@ public class OrderItemService {
 	@Autowired private InventoryService inventoryService;
 	
 	public OrderItem saveOrderItem(OrderItem orderItem) {
-		int quantity = inventoryService.getQuantityForProduct(orderItem.getProductId());
-		if(quantity <= 0 || orderItem.getQuantity() > quantity) {
-            throw new IllegalArgumentException("Not enough quantity for product ID: " + orderItem.getProductId());
-        }
-        return orderItemRepository.save(orderItem);
-    }
+	    int quantity = getQuantityForProduct(orderItem.getProductId());
+
+	    if(quantity <= 0 || orderItem.getQuantity() > quantity) {
+	        throw new IllegalArgumentException("Not enough quantity for product ID: " + orderItem.getProductId());
+	    }
+	    return orderItemRepository.save(orderItem);
+	}
+
+	@Retry(name = "inventoryService", fallbackMethod = "fallbackInventory")
+	@Bulkhead(name = "inventoryService", type = Bulkhead.Type.THREADPOOL)
+	public int getQuantityForProduct(Long productId) {
+	    return inventoryService.getQuantityForProduct(productId);
+	}
+
+	public int fallbackInventory(Long productId, Throwable t) {
+	    return 0;
+	}
 
     public List<OrderItem> getAllOrderItems() {
         return orderItemRepository.findAll();

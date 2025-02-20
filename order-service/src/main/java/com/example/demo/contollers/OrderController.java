@@ -25,6 +25,10 @@ import com.example.demo.services.OrderService;
 import com.example.demo.services.PaymentService;
 import com.example.demo.services.ProductService;
 
+import io.github.resilience4j.bulkhead.annotation.Bulkhead;
+import io.github.resilience4j.retry.annotation.Retry;
+
+
 @RestController
 @RequestMapping("/orders")
 public class OrderController {
@@ -51,25 +55,72 @@ public class OrderController {
 		List<OrderItem> orderItems = orderItemService.findByOrderId(id);
 		double totalPrice = 0;
 		for(OrderItem item : orderItems) {
-			totalPrice += productService.getProductPrice(item.getProductId());
+			double price = getProductPriceWithRetry(item.getProductId());
+			if(price <= 0) return new ResponseEntity<>(success, HttpStatus.EXPECTATION_FAILED);
+			totalPrice += price;
 		}
 		HashMap<Long, Integer> changedInventory = new HashMap<>();
 		for(OrderItem item : orderItems) {
-			Object inventory = inventoryService.changeQuantityForProduct(item.getProductId(), -1 * item.getQuantity());
+			Object inventory = changeInventoryWithRetry(item.getProductId(), -1 * item.getQuantity());
 			if(inventory == null) {
 				success = false;
 				//rollback
 				for(Long k : changedInventory.keySet()) {
-					inventoryService.changeQuantityForProduct(k, changedInventory.get(k));
+					changeInventoryWithRetry(k, changedInventory.get(k));
 				}
 		        return new ResponseEntity<>(success, HttpStatus.EXPECTATION_FAILED);
 			} else {
 				changedInventory.put(item.getProductId(), item.getQuantity());
 			}
 		}
-		paymentService.payOrder(new Payment(id, totalPrice));
-        return new ResponseEntity<>(success, HttpStatus.OK);
+		success = payOrderWithRetry(new Payment(id, totalPrice));
+		
+		if(success) return new ResponseEntity<>(success, HttpStatus.OK);
+		
+		for(Long k : changedInventory.keySet()) {
+			changeInventoryWithRetry(k, changedInventory.get(k));
+		}
+        return new ResponseEntity<>(success, HttpStatus.EXPECTATION_FAILED);
+        
     }
+	
+	@Retry(name = "productService", fallbackMethod = "fallbackGetProductPrice")
+	@Bulkhead(name = "productService", type = Bulkhead.Type.THREADPOOL)
+	public double getProductPriceWithRetry(Long productId) {
+	    return productService.getProductPrice(productId);
+	}
+
+	@Retry(name = "inventoryService", fallbackMethod = "fallbackChangeInventory")
+	@Bulkhead(name = "inventoryService", type = Bulkhead.Type.THREADPOOL)
+	public Object changeInventoryWithRetry(Long productId, int quantityChange) {
+	    return inventoryService.changeQuantityForProduct(productId, quantityChange);
+	}
+
+	@Retry(name = "paymentService", fallbackMethod = "fallbackPayment")
+	@Bulkhead(name = "paymentService", type = Bulkhead.Type.THREADPOOL)
+	public boolean payOrderWithRetry(Payment payment) {
+	    return paymentService.payOrder(payment) != null;
+	}
+
+	public double fallbackGetProductPrice(Long productId, Throwable t) {
+		System.out.println("fallback product price");
+	    return 0.0; // Fallback price
+	}
+
+	public Object fallbackChangeInventory(Long productId, Throwable t) {
+		System.out.println("fallback inventory");
+	    return null; // Fallback inventory
+	}
+
+	public boolean fallbackPayment(Payment payment, Throwable t) {
+		System.out.println("fallback payment");
+	    return false; // Fallback failed
+	}
+
+	public Object fallbackInventory(Long productId, Throwable t) {
+		System.out.println("fallback inventory");
+	    return null; // Fallback inventory
+	}
 
     @GetMapping("/get-all")
     public ResponseEntity<List<Order>> getAllOrders() {

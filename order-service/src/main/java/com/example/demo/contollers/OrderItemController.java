@@ -27,9 +27,13 @@ public class OrderItemController {
 	private OrderItemService orderItemService;
 
     @PostMapping("/create")
-    public ResponseEntity<OrderItem> addOrderItem(@RequestBody OrderItem orderItem) {
-    	OrderItem createdOrderItem = orderItemService.saveOrderItem(orderItem);
-        return new ResponseEntity<>(createdOrderItem, HttpStatus.CREATED);
+    public ResponseEntity<?> addOrderItem(@RequestBody OrderItem orderItem) {
+    	try {
+	    	OrderItem createdOrderItem = orderItemService.saveOrderItem(orderItem);
+	        return new ResponseEntity<>(createdOrderItem, HttpStatus.CREATED);
+    	} catch(IllegalArgumentException e) {
+    		return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    	}
     }
 
     @GetMapping("/get-all")
