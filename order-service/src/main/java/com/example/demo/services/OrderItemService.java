@@ -21,12 +21,14 @@ public class OrderItemService {
 	@Autowired private OrderItemRepository orderItemRepository;
 	
 	@Autowired
-    private WebClient webClient;
+    private WebClient.Builder webClientBuilder;
 	
 	@Autowired 
 	private CircuitBreaker circuitBreaker;
 	
 	public OrderItem saveOrderItem(OrderItem orderItem) {
+		WebClient webClient = webClientBuilder.baseUrl("http://inventory-service").build();
+
 		int quantity = Mono.defer(() -> 
 			webClient.get()
 	            .uri("/inventories/quantity/" + orderItem.getProductId())

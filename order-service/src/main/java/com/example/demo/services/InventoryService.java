@@ -13,12 +13,13 @@ import reactor.core.publisher.Mono;
 public class InventoryService {
 	
 	@Autowired
-    private WebClient webClient;
+    private WebClient.Builder webClientBuilder;
 	
 	@Autowired 
 	private CircuitBreaker circuitBreaker;
 	
 	public Object changeQuantityForProduct(Long productId, int quantity) {
+		WebClient webClient = webClientBuilder.baseUrl("http://inventory-service").build();
 		return Mono.defer(() -> 
 				webClient.put()
 		            .uri("/inventories/quantity/" + productId + "/" + quantity)

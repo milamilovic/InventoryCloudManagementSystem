@@ -15,12 +15,13 @@ import reactor.core.publisher.Mono;
 public class PaymentService {
 
 	@Autowired
-    private WebClient webClient;
+    private WebClient.Builder webClientBuilder;
 	
 	@Autowired 
 	private CircuitBreaker circuitBreaker;
 	
 	public Payment payOrder(Payment payment) {
+		WebClient webClient = webClientBuilder.baseUrl("http://payment-service").build();
 		return Mono.defer(() -> 
         		webClient.post()
 		            .uri("/payments")

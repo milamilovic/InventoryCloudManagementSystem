@@ -1,7 +1,5 @@
 package com.example.demo.config;
 
-import java.util.concurrent.ExecutionException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,13 +21,14 @@ import reactor.core.publisher.Mono;
 public class ApplicationConfiguration {
 	
 	@Autowired
-    private WebClient webClient;
+    private WebClient.Builder webClientBuilder;
 	
 	@Autowired 
 	private CircuitBreaker circuitBreaker;
 
 	@Bean
 	public UserDetailsService userDetailsService() {
+		WebClient webClient = webClientBuilder.baseUrl("http://customer-service").build();
 		return username -> {
             return Mono.defer(() -> 
                 webClient.get()

@@ -13,12 +13,13 @@ import reactor.core.publisher.Mono;
 public class ProductService {
 	
 	@Autowired
-    private WebClient webClient;
+    private WebClient.Builder webClientBuilder;
 	
 	@Autowired 
 	private CircuitBreaker circuitBreaker;
 	
 	public double getProductPrice(Long productId) {
+		WebClient webClient = webClientBuilder.baseUrl("http://product-service").build();
 		return Mono.defer(() -> 
                 webClient.get()
 		            .uri("/products/price/" + productId)

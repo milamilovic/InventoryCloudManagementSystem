@@ -23,13 +23,14 @@ import reactor.core.publisher.Mono;
 public class ApplicationConfiguration {
 	
 	@Autowired
-    private WebClient webClient;
+    private WebClient.Builder webClientBuilder;
 	
 	@Autowired 
 	private CircuitBreaker circuitBreaker;
 
 	@Bean
 	public UserDetailsService userDetailsService() {
+		WebClient webClient = webClientBuilder.baseUrl("http://customer-service").build();
 		return username -> {
             return Mono.defer(() -> 
                 webClient.get()
