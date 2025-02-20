@@ -19,33 +19,11 @@ import reactor.core.publisher.Mono;
 public class OrderItemService {
 
 	@Autowired private OrderItemRepository orderItemRepository;
-	
-	@Autowired
-    private WebClient.Builder webClientBuilder;
-	
-	@Autowired 
-	private CircuitBreaker circuitBreaker;
+
+	@Autowired private InventoryService inventoryService;
 	
 	public OrderItem saveOrderItem(OrderItem orderItem) {
-		WebClient webClient = webClientBuilder.baseUrl("http://inventory-service").build();
-
-		int quantity = Mono.defer(() -> 
-			webClient.get()
-	            .uri("/inventories/quantity/" + orderItem.getProductId())
-	            .retrieve()
-	            .onStatus(HttpStatusCode::isError, response -> {
-	                System.out.println("Error response: " + response.statusCode() + " - " + response.toString());
-	            	return null;
-	            })
-	            .bodyToMono(Integer.class)
-				)
-	            .transform(CircuitBreakerOperator.of(circuitBreaker))
-	            .onErrorResume(throwable -> {
-	                System.err.println("error circuit breaker: " + throwable.toString());
-	                return Mono.empty();
-	            })
-	        .block();
-		System.out.println("Quantity: " + quantity);
+		int quantity = inventoryService.getQuantityForProduct(orderItem.getProductId());
 		if(quantity <= 0 || orderItem.getQuantity() > quantity) {
             throw new IllegalArgumentException("Not enough quantity for product ID: " + orderItem.getProductId());
         }

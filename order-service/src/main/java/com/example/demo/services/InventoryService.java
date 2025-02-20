@@ -37,4 +37,24 @@ public class InventoryService {
             })
         .block();
     }
+	
+	public int getQuantityForProduct(Long productId) {
+		WebClient webClient = webClientBuilder.baseUrl("http://inventory-service").build();
+		return Mono.defer(() -> 
+			webClient.get()
+	        .uri("/inventories/quantity/" + productId)
+	        .retrieve()
+	        .onStatus(HttpStatusCode::isError, response -> {
+	            System.out.println("Error response: " + response.statusCode() + " - " + response.toString());
+	        	return null;
+	        })
+	        .bodyToMono(Integer.class)
+			)
+	        .transform(CircuitBreakerOperator.of(circuitBreaker))
+	        .onErrorResume(throwable -> {
+	            System.err.println("error circuit breaker: " + throwable.toString());
+	            return Mono.empty();
+	        })
+	    .block();
+    }
 }
