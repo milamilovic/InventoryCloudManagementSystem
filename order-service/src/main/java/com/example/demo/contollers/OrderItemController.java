@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import com.example.demo.models.OrderItem;
 import com.example.demo.services.OrderItemService;
@@ -25,11 +26,14 @@ public class OrderItemController {
 	@Autowired
 	private OrderItemService orderItemService;
 
-    // Create or update an OrderItem
-    @PostMapping
-    public ResponseEntity<OrderItem> createOrderItem(@RequestBody OrderItem orderItem) {
-        OrderItem createdOrderItem = orderItemService.saveOrderItem(orderItem);
-        return new ResponseEntity<>(createdOrderItem, HttpStatus.CREATED);
+    @PostMapping("/create")
+    public ResponseEntity<?> addOrderItem(@RequestBody OrderItem orderItem) {
+    	try {
+	    	OrderItem createdOrderItem = orderItemService.saveOrderItem(orderItem);
+	        return new ResponseEntity<>(createdOrderItem, HttpStatus.CREATED);
+    	} catch(IllegalArgumentException e) {
+    		return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    	}
     }
 
     @GetMapping("/get-all")

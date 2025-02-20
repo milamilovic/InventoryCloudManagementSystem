@@ -1,5 +1,6 @@
 package com.example.demo.services;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,6 +16,7 @@ public class OrderService {
 	@Autowired private OrderRepository orderRepository;
 	
 	public Order saveOrder(Order order) {
+		order.setOrderDate(LocalDate.now());
         return orderRepository.save(order);
     }
 

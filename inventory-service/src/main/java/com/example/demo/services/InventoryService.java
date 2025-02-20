@@ -41,4 +41,25 @@ public class InventoryService {
             return null;
         }
     }
+
+	public int getQuantityByProductId(Long id) {
+		Optional<Inventory> inventoryOptional = inventoryRepository.findByProductId(id);
+        
+        if (inventoryOptional.isPresent()) {
+            return inventoryOptional.get().getQuantity();
+        }
+        return -1;
+	}
+
+	public Inventory updateProductQuantityByProductId(Long id, int change) {
+		Optional<Inventory> inventoryOptional = inventoryRepository.findByProductId(id);
+        
+        if (inventoryOptional.isPresent()) {
+        	Inventory inventory = inventoryOptional.get();
+        	inventory.setQuantity(inventory.getQuantity() + change);
+            return inventoryRepository.save(inventory);
+        }
+        
+        return null;
+	}
 }

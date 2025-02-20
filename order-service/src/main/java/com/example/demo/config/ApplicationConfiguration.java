@@ -1,7 +1,5 @@
 package com.example.demo.config;
 
-import java.util.concurrent.ExecutionException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,27 +13,36 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import com.example.demo.models.Customer;
 
+import io.github.resilience4j.circuitbreaker.CircuitBreaker;
+import io.github.resilience4j.reactor.circuitbreaker.operator.CircuitBreakerOperator;
+import reactor.core.publisher.Mono;
+
 @Configuration
 public class ApplicationConfiguration {
 	
 	@Autowired
-    private WebClient webClient;
+    private WebClient.Builder webClientBuilder;
+	
+	@Autowired 
+	private CircuitBreaker circuitBreaker;
 
 	@Bean
 	public UserDetailsService userDetailsService() {
-	    return username -> {
-	        try {
-				return webClient.get()
-				        .uri("/customers/username/" + username)
-				        .retrieve()
-				        .bodyToMono(Customer.class)
-				        .toFuture().get();
-			} catch (InterruptedException | ExecutionException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			return null;
-	    };
+		WebClient webClient = webClientBuilder.baseUrl("http://customer-service").build();
+		return username -> {
+            return Mono.defer(() -> 
+                webClient.get()
+                    .uri("/customers/username/" + username)
+                    .retrieve()
+                    .bodyToMono(Customer.class)
+            )
+            .transform(CircuitBreakerOperator.of(circuitBreaker))
+            .onErrorResume(throwable -> {
+                System.err.println("error circuit breaker: " + throwable.toString());
+                return Mono.empty();
+            })
+            .block();
+        };
 	}
 
 

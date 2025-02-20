@@ -26,9 +26,6 @@ public class Product {
     @Column(name = "PRICE")
 	private Double price;
 
-    @Column(name = "QUANTITY")
-	private int quantity;
-
 	public Long getId() {
 		return id;
 	}
@@ -51,13 +48,5 @@ public class Product {
 
 	public void setPrice(Double price) {
 		this.price = price;
-	}
-
-	public int getQuantity() {
-		return quantity;
-	}
-
-	public void setQuantity(int quantity) {
-		this.quantity = quantity;
 	}
 }
