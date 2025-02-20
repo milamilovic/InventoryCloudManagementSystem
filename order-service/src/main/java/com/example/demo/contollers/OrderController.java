@@ -16,13 +16,27 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.models.Order;
+import com.example.demo.models.OrderItem;
+import com.example.demo.models.Payment;
+import com.example.demo.services.InventoryService;
+import com.example.demo.services.OrderItemService;
 import com.example.demo.services.OrderService;
+import com.example.demo.services.PaymentService;
+import com.example.demo.services.ProductService;
 
 @RestController
 @RequestMapping("/orders")
 public class OrderController {
 
 	@Autowired private OrderService orderService;
+	
+	@Autowired private OrderItemService orderItemService;
+	
+	@Autowired private ProductService productService;
+	
+	@Autowired private PaymentService paymentService;
+	
+	@Autowired private InventoryService inventoryService;
 	
 	@PostMapping("/create")
     public ResponseEntity<Order> createOrder(@RequestBody Order order) {
@@ -33,17 +47,15 @@ public class OrderController {
 	@PutMapping("/order/{id}")
     public ResponseEntity<Boolean> order(@PathVariable Long id) {
         boolean success = true;
-        /*
-         List<OrderItem> orderItems = orderItemService.findByOrderId(id);
-         double totalPrice = 0;
-         for(OrderItem item : orderItems) {
-         	totalPrice += productService.getPriceForProduct(item.getProductId());
-         }
-         paymentService.payOrder(new Payment(id, totalPrice));
-         for(OrderItem item : orderItems) {
-         	inventoryService.changeQuantityForProduct(item.getProductId(), item.getQuantity());
-         }
-         */
+		List<OrderItem> orderItems = orderItemService.findByOrderId(id);
+		double totalPrice = 0;
+		for(OrderItem item : orderItems) {
+			totalPrice += productService.getProductPrice(item.getProductId());
+		}
+		paymentService.payOrder(new Payment(id, totalPrice));
+		for(OrderItem item : orderItems) {
+			inventoryService.changeQuantityForProduct(item.getProductId(), item.getQuantity());
+		}
         return new ResponseEntity<>(success, HttpStatus.OK);
     }
 
