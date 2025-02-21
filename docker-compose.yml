@@ -46,57 +46,79 @@ services:
   customer-service:
     build: ./customer-service
     container_name: customer-service
-    environment:
-      - SPRING_PROFILES_ACTIVE=docker
     ports:
       - "8080:8080"
     links:
       - eureka-server
       - config-server
+    restart: always
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      eureka.client.serviceUrl.defaultZone: http://eureka-server:8761/eureka
+      spring.cloud.config.uri: http://config-server:8888
+      SPRING_APPLICATION_JSON: '{"eureka_server":{"client":{"serviceUrl":{"defaultZone":"http://eureka-server:8761/eureka"}}},"config-server":{"client":{"serviceUrl":{"defaultZone":"http://config-server:8888"}}}}'
+    command: 
+      - "--eureka.client.service-url.defaultZone=http://eureka-server:8761/eureka --spring.cloud.config.uri=http://config-server:8888"
       
   inventory-service:
     build: ./inventory-service
     container_name: inventory-service
-    environment:
-      - SPRING_PROFILES_ACTIVE=docker
     ports:
       - "8081:8081"
     links:
       - eureka-server
       - config-server
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      eureka.client.serviceUrl.defaultZone: http://eureka-server:8761/eureka
+      SPRING_APPLICATION_JSON: '{"eureka_server":{"client":{"serviceUrl":{"defaultZone":"http://eureka-server:8761/eureka"}}}}'
+    command: 
+      - "--eureka.client.service-url.defaultZone=http://eureka-server:8761/eureka"
       
   order-service:
     build: ./order-service
     container_name: order-service
-    environment:
-      - SPRING_PROFILES_ACTIVE=docker
     ports:
       - "8082:8082"
     links:
       - eureka-server
       - config-server
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      eureka.client.serviceUrl.defaultZone: http://eureka-server:8761/eureka
+      SPRING_APPLICATION_JSON: '{"eureka_server":{"client":{"serviceUrl":{"defaultZone":"http://eureka-server:8761/eureka"}}}}'
+    command: 
+      - "--eureka.client.service-url.defaultZone=http://eureka-server:8761/eureka"
       
   payment-service:
     build: ./payment-service
     container_name: payment-service
-    environment:
-      - SPRING_PROFILES_ACTIVE=docker
     ports:
       - "8083:8083"
     links:
       - eureka-server
       - config-server
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      eureka.client.serviceUrl.defaultZone: http://eureka-server:8761/eureka
+      SPRING_APPLICATION_JSON: '{"eureka_server":{"client":{"serviceUrl":{"defaultZone":"http://eureka-server:8761/eureka"}}}}'
+    command: 
+      - "--eureka.client.service-url.defaultZone=http://eureka-server:8761/eureka"
       
   product-service:
     build: ./product-service
     container_name: product-service
-    environment:
-      - SPRING_PROFILES_ACTIVE=docker
     ports:
       - "8084:8084"
     links:
       - eureka-server
       - config-server
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      eureka.client.serviceUrl.defaultZone: http://eureka-server:8761/eureka
+      SPRING_APPLICATION_JSON: '{"eureka_server":{"client":{"serviceUrl":{"defaultZone":"http://eureka-server:8761/eureka"}}}}'
+    command: 
+      - "--eureka.client.service-url.defaultZone=http://eureka-server:8761/eureka"
 
   # Elasticsearch service
   elasticsearch:
