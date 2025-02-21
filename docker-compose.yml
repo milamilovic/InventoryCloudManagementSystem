@@ -1,0 +1,145 @@
+services:
+  # Eureka Server
+  eureka-server:
+    build: ./eureka-server
+    container_name: eureka-server
+    ports:
+      - "8761:8761"
+    links:
+      - elasticsearch
+      - logstash
+      - kibana
+      - grafana
+    environment:
+      eureka.instance.hostname: eureka-server
+      eureka.client.serviceUrl.defaultZone: http://eureka-server:8761/eureka
+      
+  # Config Server
+  config-server:
+    build: ./config-server
+    container_name: config-server
+    ports:
+      - "8888:8888"
+    links:
+      - eureka-server
+    environment:
+      eureka.client.serviceUrl.defaultZone: http://eureka-server:8761/eureka
+      SPRING_APPLICATION_JSON: '{"eureka_server":{"client":{"serviceUrl":{"defaultZone":"http://eureka-server:8761/eureka"}}}}'
+    command: 
+      - "--eureka.client.service-url.defaultZone=http://eureka-server:8761/eureka"
+      
+  # API Gateway
+  api-gateway:
+    build: ./api-gateway
+    container_name: api-gateway
+    ports:
+      - "8085:8085"
+    links:
+      - eureka-server
+      - config-server
+      - customer-service
+      - inventory-service
+      - order-service
+      - payment-service
+      - product-service
+      
+  customer-service:
+    build: ./customer-service
+    container_name: customer-service
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    ports:
+      - "8080:8080"
+    links:
+      - eureka-server
+      - config-server
+      
+  inventory-service:
+    build: ./inventory-service
+    container_name: inventory-service
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    ports:
+      - "8081:8081"
+    links:
+      - eureka-server
+      - config-server
+      
+  order-service:
+    build: ./order-service
+    container_name: order-service
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    ports:
+      - "8082:8082"
+    links:
+      - eureka-server
+      - config-server
+      
+  payment-service:
+    build: ./payment-service
+    container_name: payment-service
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    ports:
+      - "8083:8083"
+    links:
+      - eureka-server
+      - config-server
+      
+  product-service:
+    build: ./product-service
+    container_name: product-service
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    ports:
+      - "8084:8084"
+    links:
+      - eureka-server
+      - config-server
+
+  # Elasticsearch service
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.6.1
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - "9200:9200"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+
+  # Logstash service
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.6.1
+    container_name: logstash
+    environment:
+      - LS_JAVA_OPTS=-Xmx256m -Xms256m
+    ports:
+      - "5044:5044"
+    volumes:
+      - ./logstash/config/logstash-saml.conf:/usr/share/logstash/pipeline/logstash-samle.conf
+
+  # Kibana service
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.6.1
+    container_name: kibana
+    environment:
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+    ports:
+      - "5601:5601"
+
+  # Grafana service
+  grafana:
+    image: grafana/grafana:9.2.3
+    container_name: grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin  # Set the Grafana admin password
+    ports:
+      - "3000:3000"
+
+
+volumes:
+  elasticsearch_data:
+    driver: local

@@ -85,19 +85,19 @@ public class OrderController {
     }
 	
 	@Retry(name = "productService", fallbackMethod = "fallbackGetProductPrice")
-	@Bulkhead(name = "productService", type = Bulkhead.Type.THREADPOOL)
+	//@Bulkhead(name = "productService", type = Bulkhead.Type.THREADPOOL)
 	public double getProductPriceWithRetry(Long productId) {
 	    return productService.getProductPrice(productId);
 	}
 
 	@Retry(name = "inventoryService", fallbackMethod = "fallbackChangeInventory")
-	@Bulkhead(name = "inventoryService", type = Bulkhead.Type.THREADPOOL)
+	//@Bulkhead(name = "inventoryService", type = Bulkhead.Type.THREADPOOL)
 	public Object changeInventoryWithRetry(Long productId, int quantityChange) {
 	    return inventoryService.changeQuantityForProduct(productId, quantityChange);
 	}
 
 	@Retry(name = "paymentService", fallbackMethod = "fallbackPayment")
-	@Bulkhead(name = "paymentService", type = Bulkhead.Type.THREADPOOL)
+	//@Bulkhead(name = "paymentService", type = Bulkhead.Type.THREADPOOL)
 	public boolean payOrderWithRetry(Payment payment) {
 	    return paymentService.payOrder(payment) != null;
 	}

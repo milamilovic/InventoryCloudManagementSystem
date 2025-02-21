@@ -6,7 +6,6 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,11 +23,11 @@ import com.example.demo.services.JwtService;
 @RestController
 @RequestMapping("/customers")
 public class CustomerController {
-
+	
 	@Autowired private CustomerService customerService;
 	@Autowired private JwtService jwtService;
-
-    @PostMapping
+	
+	@PostMapping
     public ResponseEntity<Customer> signup(@RequestBody Customer customer) {
         Customer savedCustomer = customerService.saveCustomer(customer);
         return new ResponseEntity<>(savedCustomer, HttpStatus.CREATED);
@@ -82,4 +81,5 @@ public class CustomerController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
 }

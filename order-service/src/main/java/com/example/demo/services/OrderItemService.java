@@ -29,7 +29,7 @@ public class OrderItemService {
 	}
 
 	@Retry(name = "inventoryService", fallbackMethod = "fallbackInventory")
-	@Bulkhead(name = "inventoryService", type = Bulkhead.Type.THREADPOOL)
+	//@Bulkhead(name = "inventoryService", type = Bulkhead.Type.THREADPOOL)
 	public int getQuantityForProduct(Long productId) {
 	    return inventoryService.getQuantityForProduct(productId);
 	}
