@@ -39,6 +39,8 @@ public class SecurityConfiguration {
                 .requestMatchers("/customers").permitAll()
                 .requestMatchers("/customers/username/{username}").permitAll()
                 .requestMatchers("/customers/{email}/{name}").permitAll()
+                .requestMatchers("/actuator/prometheus").permitAll()
+                .requestMatchers("/metrics").permitAll()
                 .requestMatchers("/h2-console/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
