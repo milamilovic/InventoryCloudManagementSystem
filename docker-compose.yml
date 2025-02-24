@@ -57,6 +57,7 @@ services:
     links:
       - eureka-server
       - config-server
+      - logstash
     restart: always
     environment:
       SPRING_PROFILES_ACTIVE: docker
@@ -150,15 +151,17 @@ services:
   logstash:
     image: docker.elastic.co/logstash/logstash:8.6.1
     container_name: logstash
+    restart: always
     environment:
       - LS_JAVA_OPTS=-Xmx256m -Xms256m
     ports:
       - "5044:5044"
+      - "5000:5000"
     links:
       - elasticsearch
     volumes:
-      - ./logstash/config/logstash-saml.conf:/usr/share/logstash/pipeline/logstash-samle.conf
-      - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml
+      - ./logstash/config/logstash-sample.conf:/usr/share/logstash/pipeline/logstash-sample.conf
+      #- ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml
 
   # Kibana service
   kibana:
