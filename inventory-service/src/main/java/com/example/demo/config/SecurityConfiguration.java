@@ -40,6 +40,8 @@ public class SecurityConfiguration {
                 .requestMatchers("/inventories/quantity/{id}").permitAll()
                 .requestMatchers("/inventories/quantity/{id}/{change}").permitAll()
                 .requestMatchers("/inventories/quantity/{id}").permitAll()
+                .requestMatchers("/actuator/prometheus").permitAll()
+                .requestMatchers("/metrics").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .sessionManagement()

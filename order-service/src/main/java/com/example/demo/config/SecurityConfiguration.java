@@ -38,6 +38,8 @@ public class SecurityConfiguration {
                 .requestMatchers("/h2-console/**").permitAll()
                 .requestMatchers("/orders/get-all").hasRole("ADMIN")
                 .requestMatchers("/items/get-all").hasRole("ADMIN")
+                .requestMatchers("/actuator/prometheus").permitAll()
+                .requestMatchers("/metrics").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .sessionManagement()

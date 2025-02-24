@@ -75,6 +75,7 @@ services:
     links:
       - eureka-server
       - config-server
+      - logstash
     restart: always
     environment:
       SPRING_PROFILES_ACTIVE: docker
@@ -92,6 +93,7 @@ services:
     links:
       - eureka-server
       - config-server
+      - logstash
     restart: always
     environment:
       SPRING_PROFILES_ACTIVE: docker
@@ -109,6 +111,7 @@ services:
     links:
       - eureka-server
       - config-server
+      - logstash
     restart: always
     environment:
       SPRING_PROFILES_ACTIVE: docker
@@ -126,6 +129,7 @@ services:
     links:
       - eureka-server
       - config-server
+      - logstash
     restart: always
     environment:
       SPRING_PROFILES_ACTIVE: docker
