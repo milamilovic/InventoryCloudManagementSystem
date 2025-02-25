@@ -3,7 +3,6 @@ package com.example.demo.dto;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
-@AllArgsConstructor
 @NoArgsConstructor
 public class LoginResponse {
 	private String jwt;
@@ -19,6 +18,11 @@ public class LoginResponse {
 		return expiresIn;
 	}
 	public void setExpiresIn(long expiresIn) {
+		this.expiresIn = expiresIn;
+	}
+	public LoginResponse(String jwt, long expiresIn) {
+		super();
+		this.jwt = jwt;
 		this.expiresIn = expiresIn;
 	}
 }
