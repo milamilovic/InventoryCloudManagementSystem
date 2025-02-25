@@ -3,5 +3,7 @@ global:
 
 scrape_configs:
   - job_name: 'spring-microservices'
+    metrics_path: "/actuator/prometheus"
     static_configs:
-      - targets: ['product-service:8080', 'order-service:8080', 'customer-service:8080', 'inventory-service:8080', 'payment-service:8080']
+      - targets: ['product-service:8087', 'order-service:8087', 'host.docker.internal:8080', 'inventory-service:8087', 'payment-service:8087']
+

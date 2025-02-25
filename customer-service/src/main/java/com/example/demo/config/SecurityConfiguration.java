@@ -16,6 +16,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.example.demo.util.JwtAuthenticationFilter;
 
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration {
@@ -41,7 +42,11 @@ public class SecurityConfiguration {
                 .requestMatchers("/customers/{email}/{name}").permitAll()
                 .requestMatchers("/actuator/prometheus").permitAll()
                 .requestMatchers("/metrics").permitAll()
+                .requestMatchers("/metrics/").permitAll()
+                .requestMatchers("/metrics/*").permitAll()
+                .requestMatchers("/metrics/**").permitAll()
                 .requestMatchers("/h2-console/**").permitAll()
+                .requestMatchers("/actuator/prometheus").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .sessionManagement()

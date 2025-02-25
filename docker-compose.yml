@@ -9,7 +9,6 @@ services:
       - elasticsearch
       - logstash
       - kibana
-      - grafana
     environment:
       eureka.instance.hostname: eureka-server
       eureka.client.serviceUrl.defaultZone: http://eureka-server:8761/eureka
@@ -157,7 +156,8 @@ services:
     container_name: logstash
     restart: always
     environment:
-      - LS_JAVA_OPTS=-Xmx256m -Xms256m
+      - LS_JAVA_OPTS=-Xmx1g -Xms1g
+      - pipeline.workers=4
     ports:
       - "5044:5044"
       - "5000:5000"
@@ -187,6 +187,8 @@ services:
     container_name: grafana
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=admin  # Set the Grafana admin password
+    links:
+      - prometheus
     ports:
       - "3000:3000"
       
@@ -196,6 +198,12 @@ services:
     container_name: prometheus
     ports:
       - "9090:9090"
+    links:
+      - customer-service
+      - inventory-service
+      - order-service
+      - payment-service
+      - product-service
     volumes:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
 
